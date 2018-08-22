@@ -1,0 +1,450 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodel="using:CasingDesign.ViewModel"
+    xmlns:common="using:CasingDesign.Common"
+    xmlns:local="using:CasingDesign.Plots_And_Graphs"
+    xmlns:eventtocommand="using:CasingDesign.Common.Event"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Gauges="using:DevExpress.UI.Xaml.Gauges"
+    x:Class="CasingDesign.Plots_And_Graphs.Well"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe UI Light"/>
+            <Setter Property="FontSize" Value="26.669"/>
+            <Setter Property="FontWeight" Value="ExtraLight"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FF4D6384"/>
+            <Setter Property="BorderThickness" Value="1,0,0,0"/>
+            <Setter Property="BorderBrush" Value="#661F7F0A"/>
+            <Setter Property="common:TextBoxValidationExtensions.Format" Value="NumericPossitive"/>
+            <Setter Property="common:TextBoxValidationExtensions.ValidBrush" Value="#661F7F0A"/>
+            <Setter Property="common:TextBoxValidationExtensions.InvalidBrush" Value="Red"/>
+        </Style>
+        <!--<viewmodel:WellViewModel x:Key="welldata"/>-->
+        <common:BooleanToVisibilityConverter x:Key="BToV"/>
+        <common:MirrorBooleanToVisibilityConverter x:Key="MBToV"/>
+        <common:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <common:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
+    </Page.Resources>
+    <Grid x:Name="RootGrid">
+        <Border x:Name="RootBorder" BorderThickness="1">
+            <Grid x:Name="ContentGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="CasingBorder" BorderThickness="1,0" Padding="20,10,10,0" BorderBrush="#66353842">
+                    <Grid x:Name="CasingGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="253*"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Viewbox x:Name="CasingButtonsViewBox" HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="CasingList" AutomationProperties.Name="Selected Casings" Style="{StaticResource SelectedAppBarButtonStyle}" Foreground="Black" Click="Casing_To_Selected_List"/>
+                                <Button x:Name="CasingReference" AutomationProperties.Name="Casing Inventory"  Style="{StaticResource InventoryAppBarButtonStyle}" Foreground="Black" Command="{Binding ShowCasingRefList}" Click="Casing_Inventory_Click"/>
+                                <Button x:Name="CasingAllowable" AutomationProperties.Name="Allowable Holes" Style="{StaticResource NodesAppBarButtonStyle}" Foreground="Black" Command="{Binding ShowCasingAllowable}" Click="HoleAllowable_ForCasing"/>
+                                <Button x:Name="CasingAllowable2" Style="{StaticResource NodesAppBarButtonStyle}" Opacity="0" Foreground="Black"/>
+                            </StackPanel>
+                        </Viewbox>
+                        <ListView x:Name="CasingListListview"
+        					ItemsSource="{Binding CasingsData}"
+        					ItemContainerStyle="{StaticResource WellCasingItemsStyle}"
+        					CanDragItems="True" SelectionMode="Multiple" Grid.Row="1" common:ListViewExtensions.BindableSelection="{Binding CasingListSelectedItems, Mode=TwoWay}">
+                            <ListView.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.Transitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CasingSizeString}" Style="{StaticResource CasingListViewsItemsTextStyle}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                        <ListView x:Name="CasingRefListListview"
+        					ItemsSource="{Binding CasingInventoryList}"
+        					ItemContainerStyle="{StaticResource WellCasingItemsStyle}"
+        					SelectionMode="Multiple" 
+                          Grid.Row="1"
+                                  common:ListViewExtensions.BindableSelection="{Binding CasingRefSelectedItems, Mode=TwoWay}">
+                            <ListView.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.Transitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Typography.Fraction="Stacked" Style="{StaticResource CasingListViewsItemsTextStyle}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                        <ListView x:Name="CasingSourceListview"
+        					ItemsSource="{Binding CasingsData}"
+        					ItemContainerStyle="{StaticResource WellCasingItemsStyle}"
+        					SelectedIndex="{Binding CasingSourceSelectedIndex, Mode=TwoWay}"
+        					SelectedItem="{Binding CasingSourceSelectedItem, Mode=TwoWay}"
+        					SelectionMode="Single" Grid.Row="1" d:IsHidden="True">
+                            <ListView.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.Transitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CasingSizeString}" Style="{StaticResource CasingListViewsItemsTextStyle}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <eventtocommand:EventToCommandManager.Collection>
+                                <eventtocommand:EventToCommand Command="{Binding CasingSourceSelectionChanged}" Event="SelectionChanged"/>
+                            </eventtocommand:EventToCommandManager.Collection>
+                        </ListView>
+                        <ListView x:Name="CasingChoiceListview"
+        					ItemContainerStyle="{StaticResource WellCasingItemsStyle}"
+        					ItemsSource="{Binding AllowableCasingItems}"
+                            SelectionMode="Multiple" IncrementalLoadingTrigger="Edge" Grid.Row="1" common:ListViewExtensions.BindableSelection="{Binding AllowableCasingSelectedItems, Mode=TwoWay}" d:IsHidden="True">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource CasingListViewsItemsTextStyle}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                        <Popup x:Name="CasingPopup" Grid.Row="1" VerticalAlignment="Bottom" Height="0" Margin="0,289,0,217">
+                            <local:AddCustomSize Tag="Casing"/>
+                        </Popup>
+                        <Border Grid.Row="2" x:Name="CasingButtonContent">
+                            <Grid>
+                                <ItemsControl x:Name="CasingListAndReturnStackPanel" >
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapGrid Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <Button x:Name="CasingRemove"  HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomRemoveHeaderBarButtonStyle}" Command="{Binding RemoveFromCasingList}"/>
+                                    <Button x:Name="CasingAdd" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomAddHeaderBarButtonStyle}" Click="Casing_To_Selected_List" Command="{Binding AddToCasingList}"/>
+                                    <Button x:Name="CasingSelectAll" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomSelectHeaderBarButtonStyle}" Command="{Binding SelectAllCasingList}"/>
+                                    <Button x:Name="CasingClearAll" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomClearSelectionHeaderBarButtonStyle}" Command="{Binding ClearAllCasingList}"/>
+                                    <Button x:Name="CasingAddCustomSize" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomImportSelectionHeaderBarButtonStyle}" Click="Casing_Popup_Click" Command="{Binding CasingAddCustomSize}"/>
+                                </ItemsControl>
+                                <!--<Viewbox>
+                                    <StackPanel x:Name="CasingSelectAndRemoveStackPanel" Orientation="Horizontal" Width="auto" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="200,0,0,0">
+                                        <StackPanel.ChildrenTransitions>
+                                            <TransitionCollection>
+                                                <AddDeleteThemeTransition/>
+                                            </TransitionCollection>
+                                        </StackPanel.ChildrenTransitions>
+                                        
+                                    </StackPanel>
+                                </Viewbox>-->
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+                <Border x:Name="HoleBorder" Padding="20,10,10,0" BorderThickness="1,0" HorizontalAlignment="Left" BorderBrush="#661F7F0A" Grid.Column="1">
+                    <Grid x:Name="HoleGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="253*"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Viewbox>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="HoleList" AutomationProperties.Name="Selected Holes" HorizontalAlignment="Left" Foreground="Black" VerticalAlignment="Top" Style="{StaticResource SelectedAppBarButtonStyle}" Click="Hole_To_Selected_List"/>
+                                <Button x:Name="HoleReference" AutomationProperties.Name="Hole Inventory" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black" Style="{StaticResource InventoryAppBarButtonStyle}" Click="Hole_Inventory_Click" Command="{Binding ShowHoleRefList}"/>
+                                <Button x:Name="HoleAllowable" AutomationProperties.Name="Allowable Casings" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource NodesAppBarButtonStyle}" Foreground="Black" Command="{Binding ShowHoleAllowable}" Click="CasingAllowable_ForHole"/>
+                                <Button x:Name="HoleParameter" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource DrillerAppBarButtonStyle}" Foreground="Black" Click="Hole_Parameters"/>
+                            </StackPanel>
+                        </Viewbox>
+                        <Popup x:Name="HolePopup" Grid.Row="1" VerticalAlignment="Bottom" Height="0" Margin="0,289,0,217">
+                            <local:AddCustomSize Tag="Hole"/>
+                        </Popup>
+                        <ListView x:Name="HoleRefListListview" 
+        					ItemContainerStyle="{StaticResource WellHoleItemsStyle}"
+        					ItemsSource="{Binding HoleInventoryList}" 
+        					SelectionMode="Multiple"
+        					Grid.Row="1" common:ListViewExtensions.BindableSelection="{Binding HoleRefSelectedItems, Mode=TwoWay}">
+                            <ListView.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.Transitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Typography.Fraction="Stacked" Style="{StaticResource HoleListViewsItemsTextStyle}" Foreground="#FF647D3D"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                        <ListView x:Name="HoleListListview"
+        					ItemContainerStyle="{StaticResource WellHoleItemsStyle}"
+        					ItemsSource="{Binding HolesData}"
+        				 SelectionMode="Multiple" Grid.Row="1" common:ListViewExtensions.BindableSelection="{Binding HoleListSelectedItems, Mode=TwoWay}">
+                            <ListView.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.Transitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding HoleSize}" Style="{StaticResource HoleListViewsItemsTextStyle}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                        <ListView x:Name="HoleSourceListview"
+        					ItemsSource="{Binding HolesData}"
+        					ItemContainerStyle="{StaticResource WellHoleItemsStyle}"
+        					SelectedIndex="{Binding HoleSourceSelectedIndex, Mode=TwoWay}"
+        					SelectedItem="{Binding HoleSourceSelectedItem, Mode=TwoWay}" 
+        					SelectionMode="Single" Grid.Row="1">
+                            <ListView.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.Transitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding HoleSizeString}" Style="{StaticResource HoleListViewsItemsTextStyle}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <eventtocommand:EventToCommandManager.Collection>
+                                <eventtocommand:EventToCommand Command="{Binding HoleSourceSelectionChanged}" Event="SelectionChanged"/>
+                            </eventtocommand:EventToCommandManager.Collection>
+                        </ListView>
+                        <Grid x:Name="ParameterGrid" Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="253*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <ListView x:Name="HoleParameterListview" 
+        					ItemsSource="{Binding HolesData}"
+        					ItemContainerStyle="{StaticResource WellHoleItemsStyle}"
+        					SelectedItem="{Binding HoleParameterListSelectedItem, Mode=TwoWay}"
+        					SelectionMode="Single">
+                                <ListView.Transitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition/>
+                                    </TransitionCollection>
+                                </ListView.Transitions>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding HoleSizeString}" Style="{StaticResource HoleListViewsItemsTextStyle}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapGrid Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <!--<eventtocommand:EventToCommandManager.Collection>
+                                    <eventtocommand:EventToCommand Command="{Binding HoleParameterSelectionChanged}" Event="SelectionChanged"/>
+                                </eventtocommand:EventToCommandManager.Collection>-->
+                            </ListView>
+                            <!--<Border BorderThickness="0,1,0,0" BorderBrush="Black" Grid.Row="1" Margin="0,10,0,10"/>-->
+                            <Border Padding="20" Grid.Row="1" Grid.RowSpan="2">
+                                <Border.Transitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition/>
+                                    </TransitionCollection>
+                                </Border.Transitions>
+                                <Grid>
+                                    <TextBlock Text="Drill Parameters" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-20,0,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource PageSubheaderTextStyle}"/>
+                                    <TextBlock Text="DrillPipe OD" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,60,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource CostumSubheaderTextStyle}"/>
+                                    <ComboBox ItemsSource="{Binding DrillPipeODList}" SelectedItem="{Binding HoleParameterListSelectedItem.DrillPipeODString,Mode=TwoWay}" VerticalAlignment="Top"  Margin="120,60,0,0"/>
+                                    <TextBlock Text="BHA OD" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,120,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource CostumSubheaderTextStyle}"/>
+                                    <ComboBox ItemsSource="{Binding BHAODList}" SelectedItem="{Binding HoleParameterListSelectedItem.BHAODString,Mode=TwoWay}" VerticalAlignment="Top" Margin="120,120,0,0"/>
+                                    <TextBlock Text="BHA Length" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,180,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource CostumSubheaderTextStyle}"/>
+                                    <TextBox Text="{Binding HoleParameterListSelectedItem.BHALength,Mode=TwoWay}"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="120,180,0,0"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ListView x:Name="HoleChoiceListview"
+        					ItemContainerStyle="{StaticResource WellHoleItemsStyle}"
+        					ItemsSource="{Binding AllowableHoleItems}"
+                                  SelectionMode="Multiple" IncrementalLoadingTrigger="Edge" Grid.Row="1" common:ListViewExtensions.BindableSelection="{Binding AllowableHoleSelectedItems, Mode=TwoWay}">
+                            <!--<eventtocommand:EventToCommandManager.Collection>
+                                <eventtocommand:EventToCommand Command="{Binding HoleChoiceSelectionChanged}" Event="SelectionChanged"/>
+                            </eventtocommand:EventToCommandManager.Collection>-->
+                            <ListView.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.Transitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource HoleListViewsItemsTextStyle}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                        <Border Grid.Row="2" x:Name="HoleButtonContent">
+                            <Grid>
+                                <ItemsControl x:Name="HoleListAndReturnStackPanel" >
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapGrid Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <Button x:Name="HoleRemove" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomRemoveHeaderBarButtonStyle}" Command="{Binding RemoveFromHoleList}"/>
+                                    <Button x:Name="HoleAdd" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomAddHeaderBarButtonStyle}" Click="HoleAdd_Click" Command="{Binding AddToHoleList}"/>
+                                    <Button x:Name="HoleSelectAll" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomSelectHeaderBarButtonStyle}" Command="{Binding SelectAllHoleList}"/>
+                                    <Button x:Name="HoleClearAll" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomClearSelectionHeaderBarButtonStyle}" Command="{Binding ClearAllHoleList}"/>
+                                    <Button x:Name="HoleAddCustomSize" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource CustomImportSelectionHeaderBarButtonStyle}" Click="Hole_Popup_Click" Command="{Binding HoleAddCustomSize}"/>
+                                </ItemsControl>
+                                <StackPanel x:Name="HoleSelectAndRemoveStackPanel" Orientation="Horizontal" Margin="200,0,0,0" Width="auto" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top">
+                                    <StackPanel.ChildrenTransitions>
+                                        <TransitionCollection>
+                                            <AddDeleteThemeTransition/>
+                                        </TransitionCollection>
+                                    </StackPanel.ChildrenTransitions>
+
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        
+                    </Grid>
+                </Border>
+                <!--<Border BorderBrush="#6647546E" BorderThickness="1,0,0,0" HorizontalAlignment="Left" Height="814" Margin="1074,129,0,0" VerticalAlignment="Top" Width="4"/>-->
+                <!--<TextBlock HorizontalAlignment="Left" Margin="1377,84,0,0" TextWrapping="Wrap" Text="{Binding CasingSourceSelectedIndex}" VerticalAlignment="Top" Foreground="Black" Style="{StaticResource PageHeaderTextStyle}"/>-->
+                <Border x:Name="ConfigBorder" Grid.Column="2" BorderBrush="#661F7F0A" BorderThickness="1,0" HorizontalAlignment="Left">
+                    <Grid x:Name="ConfigGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="77*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="818*"/>
+                        </Grid.RowDefinitions>
+                        <Viewbox>
+                            <TextBlock Text="Available Well Configs" FontSize="26.667" Foreground="Black" Style="{StaticResource PageSubheaderTextStyle}" HorizontalAlignment="Center" Grid.Column="1"  />
+                        </Viewbox>
+                        <ProgressBar Margin="0,20,0,0" Grid.Row="1" Grid.ColumnSpan="3" Height="10" VerticalAlignment="Stretch" IsIndeterminate="{Binding InProgress}" Background="Transparent"/>
+                        <TextBlock x:Name="ErrorTextBlock" Margin="20,0,0,0" Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding ErrorMessage}" TextWrapping="Wrap" Style="{StaticResource CostumSubheaderTextStyle}" Foreground="Red"/>
+                        <TextBlock x:Name="NoConfigCautionTextBlock" Margin="20,0,0,0" Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding NoConfigCaution}" TextWrapping="Wrap" Style="{StaticResource CostumSubheaderTextStyle}" Foreground="#FFFF5D00"/>
+                        <!--<Border Grid.Row="1" Margin="0,0" BorderBrush="#661F7F0A" BorderThickness="0,1,0,0"/>-->
+                        <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Viewbox  Margin="30,0,30,0">
+                                    <StackPanel x:Name="ConfigOptionStackPanel">
+                                        <TextBlock Text="" Foreground="Black" TextWrapping="Wrap" Style="{StaticResource PageSubheaderTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="45,0,45,40" />
+                                        <ToggleButton IsChecked="True" x:Name="ComplationType" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource GeneralToggleButtonStyle}" Content="Complation Type :" VerticalAlignment="Top" HorizontalAlignment="Center" IsHitTestVisible="False"/>
+                                        <ComboBox ItemsSource="{Binding ComplationTypeList}" SelectedItem="{Binding ComplationType, Mode=TwoWay}" Margin="0,10,0,0"/>
+                                        <ToggleButton IsChecked="{Binding FirstCasingInclude, Mode=TwoWay}" x:Name="FirstCasingToggle" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Margin="0,10,0,0" Style="{StaticResource GeneralToggleButtonStyle}" Content="First Casing Size :" VerticalAlignment="Top" HorizontalAlignment="Center"  BorderThickness="0"/>
+                                        <ComboBox IsEnabled="{Binding FirstCasingInclude}" ItemsSource="{Binding CasingsData}" SelectedItem="{Binding FirstCasing, Mode=TwoWay}" Margin="0,10,0,0">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding CasingSizeString}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <ToggleButton IsChecked="{Binding FirstHoleInclude, Mode=TwoWay}" x:Name="FirstHoleToggle" Margin="0,10,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource GeneralToggleButtonStyle}" Content="First Hole Size :" VerticalAlignment="Top" HorizontalAlignment="Center"  BorderThickness="0"/>
+                                        <ComboBox IsEnabled="{Binding FirstHoleInclude}" ItemsSource="{Binding HolesData}" SelectedItem="{Binding FirstHole, Mode=TwoWay}" Margin="0,10,0,0">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding HoleSizeString}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <ToggleButton IsChecked="{Binding LastCasingInclude, Mode=TwoWay}" x:Name="LastCasingToggle" Margin="0,10,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource GeneralToggleButtonStyle}" Content="Last Casing Size :" VerticalAlignment="Top" HorizontalAlignment="Center"  BorderThickness="0"/>
+                                        <ComboBox IsEnabled="{Binding LastCasingInclude}" ItemsSource="{Binding CasingsData}" SelectedItem="{Binding LastCasing, Mode=TwoWay}" Margin="0,10,0,0">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding CasingSizeString}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <ToggleButton IsChecked="{Binding LastHoleInclude, Mode=TwoWay}" x:Name="LastHoleToggle" Margin="0,10,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource GeneralToggleButtonStyle}" Content="Last Hole Size :" VerticalAlignment="Top" HorizontalAlignment="Center"  BorderThickness="0"/>
+                                        <ComboBox IsEnabled="{Binding LastHoleInclude}" ItemsSource="{Binding HolesData}" SelectedItem="{Binding LastHole, Mode=TwoWay}" Margin="0,10,0,0">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding HoleSizeString}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <ToggleButton IsChecked="{Binding NumberOfSizeInclude, Mode=TwoWay}" x:Name="NumberOfSizesToggle" Margin="0,10,0,0" Foreground="{StaticResource SubheaderTextStyleOnBackground}" Style="{StaticResource GeneralToggleButtonStyle}" Content="Number Of Casing :" VerticalAlignment="Top" HorizontalAlignment="Center"  BorderThickness="0"/>
+                                        <TextBox Text="{Binding NumberOfCasing, Mode=TwoWay}" IsEnabled="{Binding NumberOfSizeInclude}" Margin="10"/>
+                                        <Button Margin="0,10,0,0" Command="{Binding CreateWellConfig}" Foreground="Black" HorizontalAlignment="Center" Style="{StaticResource CustomRefreshAppBarButtonStyle}"/>
+                                    </StackPanel>
+                                </Viewbox>
+                                <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="#661F7F0A" Margin="0,50"/>
+                                <Border common:VisibilityExtension.IsVisible="{Binding ConfigCount,Converter={StaticResource CountToVisibilityConverter}}" Grid.Column="2">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="688*"/>
+                                            <RowDefinition Height="45*"/>
+                                        </Grid.RowDefinitions>
+                                        <FlipView Margin="0,50,0,20" x:Name="ConfigFlipView"  ItemsSource="{Binding FinalWellConfig}" SelectedIndex="{Binding ConfigCurrent,Mode=TwoWay}" BorderBrush="#661F7F0A">
+                                            <FlipView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <local:AvailableWellConfigControl 
+                                                LineBrushCasingToHole="#FF615650" 
+                                                LineBrushHoleToCasing="#FF647D3D" 
+                                                Sizes="{Binding}"
+                                                HoleCircleBrush="#FF647D3D" 
+                                                CasingCircleBrush="#FF615650" 
+                                                BorderThickness="0" />
+                                                </DataTemplate>
+                                            </FlipView.ItemTemplate>
+                                        </FlipView>
+                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1">
+                                            <TextBlock Text="{Binding ElementName=ConfigFlipView, Path=SelectedIndex}" Margin="0" Style="{StaticResource PageSubheaderTextStyle}" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="/" Margin="5,0,0,0" Style="{StaticResource PageSubheaderTextStyle}" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                            <TextBlock Margin="5,0,0,0" Text="{Binding ConfigCount}" Style="{StaticResource PageSubheaderTextStyle}" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+                <!--<Border BorderThickness="1,0,0,0" HorizontalAlignment="Right" Height="814" Margin="0,129,0,0" VerticalAlignment="Top" Width="24" BorderBrush="#6647546E"/>-->
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
