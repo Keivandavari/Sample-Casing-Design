@@ -13,7 +13,7 @@ This is the UI file for the well page (screenshot). Wrote in Xaml for WPF.
 
 Well.Xaml.CS:
 
-This is the CS backend file attached to the well.xaml file. You can find all view changes and events in this file.
+This is the CS backend file attached to the well.xaml file. You can find all UI interaction controls in this file.
 
 AvailableWellConfigControl.CS
 
