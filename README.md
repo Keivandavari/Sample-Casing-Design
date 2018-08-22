@@ -11,15 +11,15 @@ Well.Xaml:
 
 This is the UI file for the well page (screenshot). Wrote in Xaml for WPF.
 
-Well.Xaml.CS:
+Well.Xaml.cs:
 
 This is the CS backend file attached to the well.xaml file. You can find all UI interaction controls in this file.
 
-AvailableWellConfigControl.CS
+AvailableWellConfigControl.cs
 
 As you can see in the screenshot, the control that shows the configs at right side of the page is not a common control that provided
 by Microsoft. So I developed a custom control for the purpose.
 
-LithologyModel.CS
+LithologyModel.cs
 
 This is the Model page for lithology data of the software. 
