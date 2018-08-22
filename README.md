@@ -17,8 +17,8 @@ This is the CS backend file attached to the well.xaml file. You can find all UI 
 
 AvailableWellConfigControl.CS
 
-As you can see in the screenshot, the control that shows the configs at right side of the page is not the common control that provided
-by Microsoft. So we developed our custom control for the purpose.
+As you can see in the screenshot, the control that shows the configs at right side of the page is not a common control that provided
+by Microsoft. So I developed a custom control for the purpose.
 
 LithologyModel.CS
 
