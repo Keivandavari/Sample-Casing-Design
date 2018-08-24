@@ -1654,31 +1654,6 @@ namespace CasingDesign.ViewModel
             }
         }
 
-        private ObservableCollection<object> _holeRefSelectedItems = new ObservableCollection<object>();
-        private ObservableCollection<Model.HolesModel> _holeListSelectedItems = new ObservableCollection<Model.HolesModel>();
-        private ObservableCollection<object> _allowableHoleItems = new ObservableCollection<object>();
-        private ObservableCollection<object> _allowableHoleSelectedItems = new ObservableCollection<object>();
-        private int _holeSourceSelectedIndex;
-        private int _holeSourceTempIndex;
-        private object _holeSourceSelectedItem;
-
-        private bool _casingRefListButtonsShow = true;
-        private bool _casingListButtonsShow = false;
-        private bool _casingAllowableButtonShow = false;
-        private bool _iscasingSourceItemSelected = false;
-
-        private bool _holeRefListButtonsShow = true;
-        private bool _holeListButtonsShow = false;
-        private bool _HoleAllowableButtonShow = false;
-        private bool _isHoleSourceItemSelected = false;
-
-        private bool _firstCasingInclude;
-        private bool _lastCasingInclude;
-
-        private bool _firstHoleInclude;
-        private bool _lastHoleInclude;
-
-        private bool _numberOfSizeInclude;
 
         //private string _casingBoxTitle = "Available CS Inventory";
         //private readonly string casingListTitle = "Casing Selected List";
