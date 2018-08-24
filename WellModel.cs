@@ -1,5 +1,18 @@
-        
-        private ObservableCollection<object> _holeRefSelectedItems = new ObservableCollection<object>();
+using CasingDesign.Common;
+using CasingDesign.ViewModel;
+using GalaSoft.MvvmLight.Messaging;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.ServiceModel.Channels;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Serialization;        
+  
+
+private ObservableCollection<object> _holeRefSelectedItems = new ObservableCollection<object>();
         private ObservableCollection<Model.HolesModel> _holeListSelectedItems = new ObservableCollection<Model.HolesModel>();
         private ObservableCollection<object> _allowableHoleItems = new ObservableCollection<object>();
         private ObservableCollection<object> _allowableHoleSelectedItems = new ObservableCollection<object>();
