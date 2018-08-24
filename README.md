@@ -7,6 +7,10 @@ WellViewModel.cs:
 This is the ViewModel file for well page ( you can find the screenshot of this page in the main folder). 
 All calculation to find the final well config is in this code page. The final well configs is shown at the right side of the well page.
 
+WellModel.cs:
+
+This is the model file of well page.
+
 Well.Xaml:
 
 This is the UI file for the well page (screenshot). Wrote in Xaml for WPF.
